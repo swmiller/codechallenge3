@@ -1,7 +1,5 @@
 package com.syf.codechallenge3.model;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-
 import jakarta.persistence.*;
 
 public class Image {
