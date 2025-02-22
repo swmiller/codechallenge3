@@ -2,6 +2,7 @@ package com.syf.codechallenge3.model;
 
 import jakarta.persistence.*;
 
+@Entity
 public class Image {
 
     // Fields
@@ -13,15 +14,15 @@ public class Image {
     private String ImgurUrl;
 
     // Relationships
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_profile_id", nullable = false)
-    private UserProfile userProfile;
+    private User userProfile;
 
     // Constructors
     public Image() {
     }
 
-    public Image(String ImgurUrl, UserProfile userProfile) {
+    public Image(String ImgurUrl, User userProfile) {
         this.ImgurUrl = ImgurUrl;
         this.userProfile = userProfile;
     }
@@ -43,11 +44,11 @@ public class Image {
         this.ImgurUrl = ImgurUrl;
     }
 
-    public UserProfile getUserProfile() {
+    public User getUserProfile() {
         return userProfile;
     }
 
-    public void setUserProfile(UserProfile userProfile) {
+    public void setUserProfile(User userProfile) {
         this.userProfile = userProfile;
     }
 }

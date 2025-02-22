@@ -3,7 +3,9 @@ package com.syf.codechallenge3.model;
 import jakarta.persistence.*;
 import java.util.List;
 
-public class UserProfile {
+@Entity
+@Table(name = "user_profile")
+public class User {
 
     // Fields
     @Id
@@ -30,10 +32,10 @@ public class UserProfile {
     private List<Image> images;
 
     // Constructors
-    public UserProfile() {
+    public User() {
     }
 
-    public UserProfile(String username, String password, String email, String firstName, String lastName) {
+    public User(String username, String password, String email, String firstName, String lastName) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -88,18 +90,5 @@ public class UserProfile {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    // Override toString
-    @Override
-    public String toString() {
-        return "UserProfile{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
     }
 }
