@@ -15,17 +15,17 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User GetUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
     }
 
-    public User GetUserById(long id) {
+    public User getUserById(long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
 
-    public User RegisterUser(User user) {
+    public User registerUser(User user) {
         if (userRepository.findByUsername(user.getUserName()).isPresent()) {
             throw new UserAlreadyExistsException("User with username " + user.getUserName() + " already exists");
         }

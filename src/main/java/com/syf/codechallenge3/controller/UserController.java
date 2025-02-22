@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    // UserService userService = new UserService();
+
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -28,19 +28,19 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
-        User newUser = userService.RegisterUser(user);
+        User newUser = userService.registerUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByName(@PathVariable("username") String username) {
-        User newUser = userService.GetUserByUsername(username);
+        User newUser = userService.getUserByUsername(username);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
-        User newUser = userService.GetUserById(id);
+        User newUser = userService.getUserById(id);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
