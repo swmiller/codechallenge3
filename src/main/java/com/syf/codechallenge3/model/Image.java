@@ -11,7 +11,13 @@ public class Image {
     private Long id;
 
     @Column(nullable = false)
-    private String ImgurUrl;
+    private String title;
+
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true)
+    private String imgurImageHash;
 
     // Relationships
     @ManyToOne(fetch = FetchType.EAGER)
@@ -22,26 +28,37 @@ public class Image {
     public Image() {
     }
 
-    public Image(String ImgurUrl, User userProfile) {
-        this.ImgurUrl = ImgurUrl;
-        this.userProfile = userProfile;
+    // Getters and Setters
+    public String getTitle() {
+        return title;
     }
 
-    // Getters and Setters
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImgurImageHash() {
+        return imgurImageHash;
+    }
+
+    public void setImgurImageHash(String imgurImageHash) {
+        this.imgurImageHash = imgurImageHash;
+    }
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getImgurUrl() {
-        return ImgurUrl;
-    }
-
-    public void setImgurUrl(String ImgurUrl) {
-        this.ImgurUrl = ImgurUrl;
     }
 
     public User getUserProfile() {
