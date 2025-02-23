@@ -3,6 +3,8 @@ package com.syf.codechallenge3.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.syf.codechallenge3.exception.UserNotAuthorizedException;
+import com.syf.codechallenge3.exception.UserNotFoundException;
 import com.syf.codechallenge3.model.ImageDto;
 import com.syf.codechallenge3.service.ImageService;
 import com.syf.codechallenge3.service.UserService;
@@ -44,6 +46,16 @@ public class ImageController {
     public ResponseEntity<String> deleteImage(@PathVariable("id") Long id) {
         imageService.deleteImageById(id);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserNotAuthorizedException.class)
+    public ResponseEntity<String> handleUserNotAuthorizedException(UserNotAuthorizedException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)

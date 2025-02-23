@@ -10,7 +10,9 @@ public class ImageDto {
     private String videoFormat;
     private String title;
     private String description;
-    private String imgurImageHash;
+    private String imgurDeleteHash;
+    private String imgurLink;
+    private String imgurId;
 
     // Getters and Setters
     public String getFileName() {
@@ -85,12 +87,37 @@ public class ImageDto {
         this.description = description;
     }
 
-    public String getImgurImageHash() {
-        return imgurImageHash;
+    public String getImgurDeleteHash() {
+        return imgurDeleteHash;
     }
 
-    public void setImgurImageHash(String imgurImageHash) {
-        this.imgurImageHash = imgurImageHash;
+    public void setImgurDeleteHash(String imgurImageHash) {
+        this.imgurDeleteHash = imgurImageHash;
     }
 
+    public String getImgurLink() {
+        return imgurLink;
+    }
+
+    public void setImgurLink(String imgurLink) {
+        this.imgurLink = imgurLink;
+    }
+
+    public String getImgurId() {
+        return imgurId;
+    }
+
+    public void setImgurId(String imgurId) {
+        this.imgurId = imgurId;
+    }
+
+    // Methods
+
+    public Image toImage() {
+        Image image = new Image();
+        image.setTitle(this.title);
+        image.setDescription(this.description);
+        image.setImgurImageHash(this.imgurDeleteHash);
+        return image;
+    }
 }
