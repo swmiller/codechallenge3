@@ -17,7 +17,13 @@ public class Image {
     private String description;
 
     @Column(nullable = true)
-    private String imgurImageHash;
+    private String imgurDeleteHash;
+
+    @Column(nullable = true)
+    private String imgurLink;
+
+    @Column(nullable = true)
+    private String imgurId;
 
     // Relationships
     @ManyToOne(fetch = FetchType.EAGER)
@@ -45,12 +51,12 @@ public class Image {
         this.description = description;
     }
 
-    public String getImgurImageHash() {
-        return imgurImageHash;
+    public String getImgurDeleteHash() {
+        return imgurDeleteHash;
     }
 
-    public void setImgurImageHash(String imgurImageHash) {
-        this.imgurImageHash = imgurImageHash;
+    public void setImgurDeleteHash(String imgurImageHash) {
+        this.imgurDeleteHash = imgurImageHash;
     }
 
     public Long getId() {
@@ -67,5 +73,17 @@ public class Image {
 
     public void setUserProfile(User userProfile) {
         this.userProfile = userProfile;
+    }
+
+    // Methods
+    public ImageDto toImageDto() {
+        ImageDto imageDto = new ImageDto();
+        imageDto.setTitle(this.title);
+        imageDto.setDescription(this.description);
+        imageDto.setImgurDeleteHash(this.imgurDeleteHash);
+        imageDto.setImgurLink(this.imgurLink);
+        imageDto.setImgurId(this.imgurId);
+
+        return imageDto;
     }
 }

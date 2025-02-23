@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syf.codechallenge3.config.ImgurConfig;
+import com.syf.codechallenge3.exception.ImageNotFoundException;
 import com.syf.codechallenge3.exception.UserNotAuthorizedException;
 import com.syf.codechallenge3.exception.UserNotFoundException;
 import com.syf.codechallenge3.model.Image;
@@ -43,7 +44,10 @@ public class ImageService {
     public void deleteImageById(long id) {
         // Get image metadata from database
         // Throw exception if image not found
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));
         // Delete image from Imgur
+        
         // Delete image metadata from database
         imageRepository.deleteById(id);
     }
@@ -65,9 +69,9 @@ public class ImageService {
 
     public ImageDto getImageById(long id) {
         // Get image metadata from database
-        // Throw exception if image not found
-        // Get image from Imgur
-        return new ImageDto();
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));
+        return image.toImageDto();
     }
 
     // Validate username and password (not the best way to do this)

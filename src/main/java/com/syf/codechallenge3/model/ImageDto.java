@@ -117,7 +117,7 @@ public class ImageDto {
         Image image = new Image();
         image.setTitle(this.title);
         image.setDescription(this.description);
-        image.setImgurImageHash(this.imgurDeleteHash);
+        image.setImgurDeleteHash(this.imgurDeleteHash);
         return image;
     }
 }
