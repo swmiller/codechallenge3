@@ -1,8 +1,14 @@
 package com.syf.codechallenge3.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Image {
 
     // Fields
@@ -30,50 +36,50 @@ public class Image {
     @JoinColumn(name = "user_profile_id", nullable = false)
     private User userProfile;
 
-    // Constructors
-    public Image() {
-    }
+    // // Constructors
+    // public Image() {
+    // }
 
-    // Getters and Setters
-    public String getTitle() {
-        return title;
-    }
+    // // Getters and Setters
+    // public String getTitle() {
+    // return title;
+    // }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    // public void setTitle(String title) {
+    // this.title = title;
+    // }
 
-    public String getDescription() {
-        return description;
-    }
+    // public String getDescription() {
+    // return description;
+    // }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    // public void setDescription(String description) {
+    // this.description = description;
+    // }
 
-    public String getImgurDeleteHash() {
-        return imgurDeleteHash;
-    }
+    // public String getImgurDeleteHash() {
+    // return imgurDeleteHash;
+    // }
 
-    public void setImgurDeleteHash(String imgurImageHash) {
-        this.imgurDeleteHash = imgurImageHash;
-    }
+    // public void setImgurDeleteHash(String imgurImageHash) {
+    // this.imgurDeleteHash = imgurImageHash;
+    // }
 
-    public Long getId() {
-        return id;
-    }
+    // public Long getId() {
+    // return id;
+    // }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // public void setId(Long id) {
+    // this.id = id;
+    // }
 
-    public User getUserProfile() {
-        return userProfile;
-    }
+    // public User getUserProfile() {
+    // return userProfile;
+    // }
 
-    public void setUserProfile(User userProfile) {
-        this.userProfile = userProfile;
-    }
+    // public void setUserProfile(User userProfile) {
+    // this.userProfile = userProfile;
+    // }
 
     // Methods
     public ImageDto toImageDto() {
