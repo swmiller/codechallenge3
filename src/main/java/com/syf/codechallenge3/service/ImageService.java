@@ -1,7 +1,5 @@
 package com.syf.codechallenge3.service;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import org.apache.http.client.methods.HttpDelete;
