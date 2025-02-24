@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.syf.codechallenge3.exception.UserAlreadyExistsException;
 import com.syf.codechallenge3.exception.UserNotFoundException;
+import com.syf.codechallenge3.model.Image;
 import com.syf.codechallenge3.model.User;
 import com.syf.codechallenge3.service.UserService;
 
@@ -125,8 +128,8 @@ public class UserControllerTest {
     }
 
     private User getTestUser() {
-        User testUser = new User(TEST_USERNAME, "testpassword", "testusername@someaddress.com", "Test", "Username");
-        testUser.setId(TEST_ID);
-        return testUser;
+        User testUser2 = new User(TEST_ID, TEST_USERNAME, "testpassword", "testusername@someaddress.com", "Test",
+                "Username", new ArrayList<Image>());
+        return testUser2;
     }
 }
