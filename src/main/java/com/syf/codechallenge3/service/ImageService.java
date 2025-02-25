@@ -81,6 +81,8 @@ public class ImageService {
         }
     }
 
+    //TODO: Refactor to an IMGUR API service. Clean up communicatio code.
+
     // Upload image to Imgur
     private ImageDto uploadImageToImgur(ImageDto imageDto) {
         try {

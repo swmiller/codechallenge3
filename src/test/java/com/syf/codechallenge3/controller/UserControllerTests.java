@@ -22,7 +22,7 @@ import com.syf.codechallenge3.model.Image;
 import com.syf.codechallenge3.model.User;
 import com.syf.codechallenge3.service.UserService;
 
-public class UserControllerTest {
+public class UserControllerTests {
     private static final String TEST_USERNAME = "Test Username";
     private static final long TEST_ID = 1L;
     private static final String USER_NOT_FOUND_EXCEPTION_MESSAGE = "User not found";
