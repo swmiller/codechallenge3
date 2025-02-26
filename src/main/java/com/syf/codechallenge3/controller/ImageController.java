@@ -10,6 +10,8 @@ import com.syf.codechallenge3.model.ImageDto;
 import com.syf.codechallenge3.service.ImageService;
 import com.syf.codechallenge3.service.UserService;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +44,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/id/{id}")
-    public ResponseEntity<String> deleteImage(@PathVariable("id") Long id) {
+    public ResponseEntity<String> deleteImage(@PathVariable("id") Long id) throws IOException {
         imageService.deleteImageById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -60,6 +62,11 @@ public class ImageController {
     @ExceptionHandler(UserNotAuthorizedException.class)
     public ResponseEntity<String> handleUserNotAuthorizedException(UserNotAuthorizedException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(IOException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)

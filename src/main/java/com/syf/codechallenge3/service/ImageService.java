@@ -1,5 +1,6 @@
 package com.syf.codechallenge3.service;
 
+import java.io.IOException;
 import java.net.http.HttpResponse;
 
 import org.apache.http.client.methods.HttpDelete;
@@ -30,24 +31,45 @@ public class ImageService {
     private final String imgurClientSecret;
     private final String imgurApiImageBaseUrl;
     private final UserRepository userRepository;
+    private final ImgurService imgurService;
 
-    public ImageService(ImageRepository imageRepository, UserRepository userRepository, ImgurConfig imgurConfig) {
+    public ImageService(ImageRepository imageRepository, UserRepository userRepository, ImgurConfig imgurConfig,
+            ImgurService imgurService) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
         this.imgurConfig = imgurConfig;
+        this.imgurService = imgurService;
 
         this.imgurClientId = imgurConfig.getClientId();
         this.imgurClientSecret = imgurConfig.getClientSecret();
         this.imgurApiImageBaseUrl = imgurConfig.getImgurApiImageBaseUrl();
     }
 
-    public void deleteImageById(long id) {
+    /**
+     * Deletes an image by its ID.
+     *
+     * This method retrieves the image metadata from the database using the provided
+     * ID.
+     * 
+     * If the image is found, it deletes the image from Imgur using the image's
+     * delete hash.
+     * If the image is not found, an ImageNotFoundException is thrown.
+     *
+     * @param id the ID of the image to be deleted
+     * @throws IOException 
+     * @throws ImageNotFoundException if the image with the specified ID is not
+     *                                found
+     */
+    public void deleteImageById(long id) throws IOException {
         // Get image metadata from database
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));
 
         // Delete image from Imgur
-        deleteImageFromImgur(image.getImgurDeleteHash());
+        imgurService.deleteImage(image.getImgurDeleteHash());
+
+        // Delete image metadata from database
+        imageRepository.deleteById(id);
     }
 
     public ImageDto uploadImage(ImageDto imageDto) {
@@ -81,7 +103,7 @@ public class ImageService {
         }
     }
 
-    //TODO: Refactor to an IMGUR API service. Clean up communicatio code.
+    // TODO: Refactor to an IMGUR API service. Clean up communicatio code.
 
     // Upload image to Imgur
     private ImageDto uploadImageToImgur(ImageDto imageDto) {
@@ -115,25 +137,5 @@ public class ImageService {
         imageDto.setImgurLink(data.get("link").asText());
         imageDto.setImgurDeleteHash(data.get("deletehash").asText());
         imageDto.setImgurId(data.get("id").asText());
-    }
-
-    private void deleteImageFromImgur(String deleteHash) {
-        try {
-            // Set up HTTP client and request
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-
-            String deleteUrl = imgurApiImageBaseUrl + "/" + deleteHash;
-            HttpDelete request = new HttpDelete(deleteUrl);
-            request.addHeader("Authorization", "Client-ID " + imgurClientId);
-            request.addHeader("Client-Secret", imgurClientSecret);
-
-            // Execute delete request and check status
-            HttpResponse response = (HttpResponse) httpClient.execute(request);
-            if (((org.apache.http.HttpResponse) response).getStatusLine().getStatusCode() != 200) {
-                throw new RuntimeException("Failed to delete image from Imgur");
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete image from Imgur", e);
-        }
     }
 }
