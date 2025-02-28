@@ -32,7 +32,7 @@ public class ImageController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ImageDto> uploadImage(@RequestBody ImageDto imageDTO) {
+    public ResponseEntity<ImageDto> uploadImage(@RequestBody ImageDto imageDTO) throws IOException {
         ImageDto uploadedImage = imageService.uploadImage(imageDTO);
         return new ResponseEntity<>(uploadedImage, HttpStatus.OK);
     }

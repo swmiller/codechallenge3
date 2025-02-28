@@ -1,18 +1,8 @@
 package com.syf.codechallenge3.service;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
-
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syf.codechallenge3.config.ImgurConfig;
 import com.syf.codechallenge3.exception.ImageNotFoundException;
 import com.syf.codechallenge3.exception.UserNotAuthorizedException;
@@ -26,10 +16,6 @@ import com.syf.codechallenge3.repository.UserRepository;
 @Service
 public class ImageService {
     private final ImageRepository imageRepository;
-    private final ImgurConfig imgurConfig;
-    private final String imgurClientId;
-    private final String imgurClientSecret;
-    private final String imgurApiImageBaseUrl;
     private final UserRepository userRepository;
     private final ImgurService imgurService;
 
@@ -37,12 +23,7 @@ public class ImageService {
             ImgurService imgurService) {
         this.imageRepository = imageRepository;
         this.userRepository = userRepository;
-        this.imgurConfig = imgurConfig;
         this.imgurService = imgurService;
-
-        this.imgurClientId = imgurConfig.getClientId();
-        this.imgurClientSecret = imgurConfig.getClientSecret();
-        this.imgurApiImageBaseUrl = imgurConfig.getImgurApiImageBaseUrl();
     }
 
     /**
@@ -56,7 +37,7 @@ public class ImageService {
      * If the image is not found, an ImageNotFoundException is thrown.
      *
      * @param id the ID of the image to be deleted
-     * @throws IOException 
+     * @throws IOException
      * @throws ImageNotFoundException if the image with the specified ID is not
      *                                found
      */
@@ -72,70 +53,42 @@ public class ImageService {
         imageRepository.deleteById(id);
     }
 
-    public ImageDto uploadImage(ImageDto imageDto) {
-        // Validate username and password
-        validateCredentials(imageDto.getUsername(), imageDto.getPassword());
+    /***
+     * Uploads an image to Imgur and saves the image metadata to the database.
+     * 
+     * @param imageDto the DTO containing the image data
+     * @return The origianl image DTO with the Imgur link, delete hash, and ID added
+     * @throws UserNotFoundException      if the user is not found
+     * @throws UserNotAuthorizedException if the user is not authorized
+     */
+    public ImageDto uploadImage(ImageDto imageDto)
+            throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        // Validate that user exists
+        User user = userRepository.findByUsername(imageDto.getUsername())
+                .orElseThrow(
+                        () -> new UserNotFoundException("User with username " + imageDto.getUsername() + " not found"));
 
-        // 2. Upload image to Imgur
-        ImageDto uploadedImage = uploadImageToImgur(imageDto);
+        // Validate that user credentials are authorized
+        if (!user.getPassword().equals(imageDto.getPassword())) {
+            throw new UserNotAuthorizedException("Invalid password for user " + imageDto.getUsername());
+        }
 
-        // 3. Save image metadata to database
-        Image imageToSave = uploadedImage.toImage();
-        imageRepository.save(imageToSave);
+        // Upload image to Imgur
+        ImageDto uploadedImage = imgurService.uploadImage(imageDto);
 
-        // 4. Return image metadata
+        // Save image metadata to database
+        imageRepository.save(uploadedImage.toImage());
+
+        // Return image metadata
         return uploadedImage;
     }
 
-    public ImageDto getImageById(long id) {
+    public ImageDto getImageById(long id) throws ImageNotFoundException {
         // Get image metadata from database
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));
+
         return image.toImageDto();
     }
 
-    // Validate username and password (not the best way to do this)
-    private void validateCredentials(String username, String password) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username " + username + " not found"));
-        if (!password.equals(user.getPassword())) {
-            throw new UserNotAuthorizedException("Invalid password for user " + username);
-        }
-    }
-
-    // TODO: Refactor to an IMGUR API service. Clean up communicatio code.
-
-    // Upload image to Imgur
-    private ImageDto uploadImageToImgur(ImageDto imageDto) {
-        try {
-            // Setup HTTP client and request.
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpPost request = new HttpPost(imgurApiImageBaseUrl);
-            request.addHeader("Authorization", "Client-ID " + imgurClientId);
-            request.addHeader("Client-Secret", imgurClientSecret);
-
-            // Execute request and get response.
-            HttpResponse<String> response = (HttpResponse) httpClient.execute(request);
-            String responseBody = response.body().toString();
-
-            // Parse response and get Imgur properties.
-            getImgurProperties(responseBody, imageDto);
-            return imageDto;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload image to Imgur", e);
-        }
-    }
-
-    private void getImgurProperties(String jsonBody, ImageDto imageDto)
-            throws JsonMappingException, JsonProcessingException {
-        // Parse JSON response from Imgur
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode root = objectMapper.readTree(jsonBody);
-        JsonNode data = root.get("data");
-
-        // Set image URL and delete hash in ImageDto
-        imageDto.setImgurLink(data.get("link").asText());
-        imageDto.setImgurDeleteHash(data.get("deletehash").asText());
-        imageDto.setImgurId(data.get("id").asText());
-    }
 }

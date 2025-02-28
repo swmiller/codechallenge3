@@ -1,14 +1,21 @@
 package com.syf.codechallenge3.service;
 
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.http.HttpResponse;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syf.codechallenge3.config.ImgurConfig;
 import com.syf.codechallenge3.model.ImageDto;
 
@@ -18,10 +25,6 @@ public class ImgurService {
 
     public ImgurService(ImgurConfig imgurConfig) {
         this.imgurConfig = imgurConfig;
-    }
-
-    public ImageDto uploadImage(ImageDto imageDto) {
-        return new ImageDto();
     }
 
     public void deleteImage(String deleteHash) throws IOException {
@@ -39,5 +42,50 @@ public class ImgurService {
 
     public ImageDto getImage(String imageId) {
         return new ImageDto();
+    }
+
+    public ImageDto uploadImage(ImageDto imageDto) throws IOException {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            HttpPost postRequest = new HttpPost(imgurConfig.getImgurApiImageBaseUrl());
+            postRequest.setHeader("Authorization", "Client-ID " + imgurConfig.getClientId());
+            postRequest.setHeader("Client-Secret", imgurConfig.getClientSecret());
+
+            // Add image data to request
+            MultipartEntityBuilder meBuilder = MultipartEntityBuilder.create();
+            meBuilder.addBinaryBody("image", new ByteArrayInputStream(imageDto.getImageData()),
+                    ContentType.APPLICATION_OCTET_STREAM, imageDto.getFileName());
+            postRequest.setEntity(meBuilder.build());
+
+            // Add other metadata to request
+            if (imageDto.getTitle() != null && !imageDto.getTitle().isEmpty()) {
+                meBuilder.addTextBody("title", imageDto.getTitle(), ContentType.TEXT_PLAIN);
+            }
+
+            if (imageDto.getDescription() != null && !imageDto.getDescription().isEmpty()) {
+                meBuilder.addTextBody("description", imageDto.getDescription(), ContentType.TEXT_PLAIN);
+            }
+
+            HttpEntity entity = meBuilder.build();
+            postRequest.setEntity(entity);
+
+            try (CloseableHttpResponse response = httpClient.execute(postRequest)) {
+                HttpEntity responseEntity = response.getEntity();
+
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    String responseString = EntityUtils.toString(responseEntity);
+                    JsonNode jsonResponse = new ObjectMapper().readTree(responseString);
+                    JsonNode data = jsonResponse.get("data");
+
+                    imageDto.setImgurLink(data.get("link").asText());
+                    imageDto.setImgurDeleteHash(data.get("deletehash").asText());
+                    imageDto.setImgurId(data.get("id").asText());
+
+                } else {
+                    throw new IOException("Failed to upload image to Imgur");
+                }
+            }
+        }
+
+        return imageDto;
     }
 }
