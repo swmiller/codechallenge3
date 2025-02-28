@@ -1,6 +1,8 @@
 package com.syf.codechallenge3.service;
 
 import java.io.IOException;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.syf.codechallenge3.config.ImgurConfig;
@@ -13,6 +15,24 @@ import com.syf.codechallenge3.model.User;
 import com.syf.codechallenge3.repository.ImageRepository;
 import com.syf.codechallenge3.repository.UserRepository;
 
+/**
+ * Service class for managing images.
+ *
+ * This service provides methods to upload, delete, and retrieve images.
+ * It interacts with the database to store and retrieve image metadata,
+ * and with the Imgur service to handle image uploads and deletions.
+ *
+ * Dependencies:
+ * - ImageRepository: Repository for image metadata.
+ * - UserRepository: Repository for user data.
+ * - ImgurService: Service for interacting with Imgur API.
+ *
+ * Methods:
+ * - deleteImageById(long id): Deletes an image by its ID.
+ * - uploadImage(ImageDto imageDto): Uploads an image to Imgur and saves its
+ * metadata.
+ * - getImageById(long id): Retrieves an image by its ID.
+ */
 @Service
 public class ImageService {
     private final ImageRepository imageRepository;
@@ -53,13 +73,24 @@ public class ImageService {
         imageRepository.deleteById(id);
     }
 
-    /***
-     * Uploads an image to Imgur and saves the image metadata to the database.
-     * 
-     * @param imageDto the DTO containing the image data
-     * @return The origianl image DTO with the Imgur link, delete hash, and ID added
-     * @throws UserNotFoundException      if the user is not found
-     * @throws UserNotAuthorizedException if the user is not authorized
+    /**
+     * Uploads an image to Imgur and saves its metadata to the database.
+     *
+     * This method validates the user's existence and authorization before uploading
+     * the image to Imgur. If the user is not found, a UserNotFoundException is
+     * thrown.
+     * If the user's credentials are not authorized, a UserNotAuthorizedException is
+     * thrown.
+     * After successful upload, the image metadata is saved to the database.
+     *
+     * @param imageDto the DTO containing image data and user credentials
+     * @return the DTO containing the uploaded image metadata
+     * @throws UserNotFoundException      if the user with the specified username is
+     *                                    not found
+     * @throws UserNotAuthorizedException if the user's credentials are not
+     *                                    authorized
+     * @throws IOException                if an I/O error occurs during the upload
+     *                                    process
      */
     public ImageDto uploadImage(ImageDto imageDto)
             throws UserNotFoundException, UserNotAuthorizedException, IOException {
@@ -83,6 +114,19 @@ public class ImageService {
         return uploadedImage;
     }
 
+    /**
+     * Retrieves an image by its ID.
+     *
+     * This method fetches the image metadata from the database using the provided
+     * ID.
+     * If the image is found, it returns the image metadata as an ImageDto.
+     * If the image is not found, an ImageNotFoundException is thrown.
+     *
+     * @param id the ID of the image to be retrieved
+     * @return the DTO containing the image metadata
+     * @throws ImageNotFoundException if the image with the specified ID is not
+     *                                found
+     */
     public ImageDto getImageById(long id) throws ImageNotFoundException {
         // Get image metadata from database
         Image image = imageRepository.findById(id)
@@ -90,5 +134,4 @@ public class ImageService {
 
         return image.toImageDto();
     }
-
 }
