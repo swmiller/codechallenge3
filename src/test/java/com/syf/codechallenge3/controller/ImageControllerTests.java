@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -48,48 +50,48 @@ public class ImageControllerTests {
 
     // Test controller endpoints
 
-    // @Test
-    // public void testUploadImage_Success() {
-    // // Arrange
-    // ImageDto testImage = createTestImageDto();
-    // when(imageService.uploadImage(any(ImageDto.class))).thenReturn(testImage);
+    @Test
+    public void testUploadImage_Success() throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        // Arrange
+        ImageDto testImage = createTestImageDto();
+        when(imageService.uploadImage(any(ImageDto.class))).thenReturn(testImage);
 
-    // // Act
-    // ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
+        // Act
+        ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
 
-    // // Assert
-    // assertEquals(HttpStatus.OK, response.getStatusCode());
-    // assertEquals(testImage, response.getBody());
-    // }
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(testImage, response.getBody());
+    }
 
-    // public void testUploadImage_UserNotFoundException() {
-    // // Arrange
-    // ImageDto testImage = createTestImageDto();
-    // doThrow(new
-    // UserNotFoundException(USER_NOT_FOUND_MESSAGE)).when(imageService).uploadImage(any(ImageDto.class));
+    public void testUploadImage_UserNotFoundException()
+            throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        // Arrange
+        ImageDto testImage = createTestImageDto();
+        doThrow(new UserNotFoundException(USER_NOT_FOUND_MESSAGE)).when(imageService).uploadImage(any(ImageDto.class));
 
-    // // Act
-    // ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
+        // Act
+        ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
 
-    // // Assert
-    // assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    // assertEquals(USER_NOT_FOUND_MESSAGE, response.getBody());
-    // }
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(USER_NOT_FOUND_MESSAGE, response.getBody());
+    }
 
-    // public void testUploadImage_UserNotAuthorizedException() {
-    // // Arrange
-    // ImageDto testImage = createTestImageDto();
-    // doThrow(new
-    // UserNotAuthorizedException(USER_NOT_AUTHORIZED_MESSAGE)).when(imageService)
-    // .uploadImage(any(ImageDto.class));
+    public void testUploadImage_UserNotAuthorizedException()
+            throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        // Arrange
+        ImageDto testImage = createTestImageDto();
+        doThrow(new UserNotAuthorizedException(USER_NOT_AUTHORIZED_MESSAGE)).when(imageService)
+                .uploadImage(any(ImageDto.class));
 
-    // // Act
-    // ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
+        // Act
+        ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
 
-    // // Assert
-    // assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    // assertEquals(USER_NOT_AUTHORIZED_MESSAGE, response.getBody());
-    // }
+        // Assert
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(USER_NOT_AUTHORIZED_MESSAGE, response.getBody());
+    }
 
     @Test
     public void testGetImage_Success() {
@@ -116,31 +118,31 @@ public class ImageControllerTests {
         });
     }
 
-    // @Test
-    // public void testDeleteImage_Success() {
-    // // Arrange
-    // ImageDto testImage = createTestImageDto();
-    // when(imageService.uploadImage(any(ImageDto.class))).thenReturn(testImage);
+    @Test
+    public void testDeleteImage_Success() throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        // Arrange
+        ImageDto testImage = createTestImageDto();
+        when(imageService.uploadImage(any(ImageDto.class))).thenReturn(testImage);
 
-    // // Act
-    // ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
+        // Act
+        ResponseEntity<ImageDto> response = imageController.uploadImage(testImage);
 
-    // // Assert
-    // assertEquals(HttpStatus.OK, response.getStatusCode());
-    // assertEquals(testImage, response.getBody());
-    // }
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(testImage, response.getBody());
+    }
 
-    // @Test
-    // public void testDeleteImage_ImageNotFoundException() {
-    // // Arrange
-    // doThrow(new
-    // ImageNotFoundException(IMAGE_NOT_FOUND_MESSAGE)).when(imageService).deleteImageById(anyLong());
+    @Test
+    public void testDeleteImage_ImageNotFoundException()
+            throws IOException, UserNotFoundException, UserNotAuthorizedException {
+        // Arrange
+        doThrow(new ImageNotFoundException(IMAGE_NOT_FOUND_MESSAGE)).when(imageService).deleteImageById(anyLong());
 
-    // // Act and Assert
-    // assertThrows(ImageNotFoundException.class, () -> {
-    // imageController.deleteImage(3L);
-    // });
-    // }
+        // Act and Assert
+        assertThrows(ImageNotFoundException.class, () -> {
+            imageController.deleteImage(3L);
+        });
+    }
 
     @Test
     public void testHandleImageNotFoundException() {
