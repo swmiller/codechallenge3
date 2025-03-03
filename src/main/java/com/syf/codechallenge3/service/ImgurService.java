@@ -19,6 +19,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.syf.codechallenge3.config.ImgurConfig;
 import com.syf.codechallenge3.model.ImageDto;
 
+/**
+ * Service class for interacting with the Imgur API.
+ *
+ * This service provides methods to upload and delete images from Imgur.
+ * It uses the Apache HttpClient library to make HTTP requests to the Imgur API.
+ *
+ * Dependencies:
+ * - ImgurConfig: Configuration properties for the Imgur API.
+ *
+ * Methods:
+ * - deleteImage(String deleteHash): Deletes an image from Imgur using its
+ * delete hash.
+ * - uploadImage(ImageDto imageDto): Uploads an image to Imgur and returns the
+ * image metadata.
+ */
 @Service
 public class ImgurService {
     private final ImgurConfig imgurConfig;
@@ -27,6 +42,12 @@ public class ImgurService {
         this.imgurConfig = imgurConfig;
     }
 
+    /**
+     * Deletes an image from Imgur using its delete hash.
+     * 
+     * @param deleteHash the delete hash of the image to be deleted
+     * @throws IOException if the image delete fails throw an exception
+     */
     public void deleteImage(String deleteHash) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpDelete deleteRequest = new HttpDelete(imgurConfig.getImgurApiImageBaseUrl() + "/" + deleteHash);
@@ -40,10 +61,13 @@ public class ImgurService {
         }
     }
 
-    public ImageDto getImage(String imageId) {
-        return new ImageDto();
-    }
-
+    /**
+     * Uploads an image to Imgur.
+     * 
+     * @param imageDto the image data to be uploaded
+     * @return the ImageDto object with Imgur metadata
+     * @throws IOException if the image upload fails throw an exception
+     */
     public ImageDto uploadImage(ImageDto imageDto) throws IOException {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost postRequest = new HttpPost(imgurConfig.getImgurApiImageBaseUrl());
