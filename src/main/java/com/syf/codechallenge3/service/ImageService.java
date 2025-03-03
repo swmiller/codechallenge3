@@ -1,8 +1,6 @@
 package com.syf.codechallenge3.service;
 
 import java.io.IOException;
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import com.syf.codechallenge3.config.ImgurConfig;
