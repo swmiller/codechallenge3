@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 public class ImageDto {
+    private Long id;
     private String fileName;
     private String fileType; // Image or video
     private byte[] imageData;

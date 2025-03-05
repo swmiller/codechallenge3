@@ -198,6 +198,7 @@ public class ImageControllerTests {
 
     private ImageDto createTestImageDto() {
         ImageDto imageDto = new ImageDto(
+                1L,
                 "testFileName.jpg",
                 "Image",
                 new byte[] { 0x00, 0x01, 0x02 },
