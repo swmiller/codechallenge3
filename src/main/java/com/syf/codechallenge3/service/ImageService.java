@@ -1,6 +1,9 @@
 package com.syf.codechallenge3.service;
 
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.syf.codechallenge3.config.ImgurConfig;
@@ -36,6 +39,7 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final UserRepository userRepository;
     private final ImgurService imgurService;
+    private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
 
     public ImageService(ImageRepository imageRepository, UserRepository userRepository, ImgurConfig imgurConfig,
             ImgurService imgurService) {
@@ -60,6 +64,8 @@ public class ImageService {
      *                                found
      */
     public void deleteImageById(long id) throws IOException {
+        logger.info("Deleting image with id: {}", id);
+
         // Get image metadata from database
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));
@@ -92,6 +98,8 @@ public class ImageService {
      */
     public ImageDto uploadImage(ImageDto imageDto)
             throws UserNotFoundException, UserNotAuthorizedException, IOException {
+        logger.info("Uploading image: {}", imageDto);
+
         // Validate that user exists
         User user = userRepository.findByUsername(imageDto.getUsername())
                 .orElseThrow(
@@ -126,6 +134,8 @@ public class ImageService {
      *                                found
      */
     public ImageDto getImageById(long id) throws ImageNotFoundException {
+        logger.info("Retrieving image by ID: {}", id);
+
         // Get image metadata from database
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new ImageNotFoundException("Image with id " + id + " not found"));

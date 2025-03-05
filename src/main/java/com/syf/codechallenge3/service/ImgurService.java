@@ -2,6 +2,8 @@ package com.syf.codechallenge3.service;
 
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -37,6 +39,7 @@ import com.syf.codechallenge3.model.ImageDto;
 @Service
 public class ImgurService {
     private final ImgurConfig imgurConfig;
+    private static final Logger logger = LoggerFactory.getLogger(ImgurService.class);
 
     public ImgurService(ImgurConfig imgurConfig) {
         this.imgurConfig = imgurConfig;
@@ -49,6 +52,8 @@ public class ImgurService {
      * @throws IOException if the image delete fails throw an exception
      */
     public void deleteImage(String deleteHash) throws IOException {
+        logger.info("Deleting image from Imgur with delete hash: {}", deleteHash);
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpDelete deleteRequest = new HttpDelete(imgurConfig.getImgurApiImageBaseUrl() + "/" + deleteHash);
             deleteRequest.setHeader("Authorization", "Client-ID " + imgurConfig.getClientId());
@@ -69,6 +74,8 @@ public class ImgurService {
      * @throws IOException if the image upload fails throw an exception
      */
     public ImageDto uploadImage(ImageDto imageDto) throws IOException {
+        logger.info("Uploading image to Imgur: {}", imageDto);
+
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost postRequest = new HttpPost(imgurConfig.getImgurApiImageBaseUrl());
             postRequest.setHeader("Authorization", "Client-ID " + imgurConfig.getClientId());

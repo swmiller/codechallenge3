@@ -3,6 +3,9 @@ package com.syf.codechallenge3.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.syf.codechallenge3.exception.UserAlreadyExistsException;
 import com.syf.codechallenge3.exception.UserNotFoundException;
 import com.syf.codechallenge3.model.User;
@@ -34,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     public UserController(UserService userService) {
@@ -49,6 +52,8 @@ public class UserController {
      */
     @PostMapping("/register")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
+        logger.info("Registering user: {}", user);
+
         User newUser = userService.registerUser(user);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
@@ -61,6 +66,8 @@ public class UserController {
      */
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByName(@PathVariable("username") String username) {
+        logger.info("Retrieving user by username: {}", username);
+
         User newUser = userService.getUserByUsername(username);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
@@ -73,6 +80,8 @@ public class UserController {
      */
     @GetMapping("/id/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") long id) {
+        logger.info("Retrieving user by ID: {}", id);
+
         User newUser = userService.getUserById(id);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
@@ -85,6 +94,8 @@ public class UserController {
      */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        logger.error("User not found: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -96,6 +107,8 @@ public class UserController {
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<String> handleUserAlreadyExistsException(UserAlreadyExistsException e) {
+        logger.error("User already exists: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 
@@ -107,6 +120,8 @@ public class UserController {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
+        logger.error("Internal server error: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

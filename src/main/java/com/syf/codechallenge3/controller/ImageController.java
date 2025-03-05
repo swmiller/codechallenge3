@@ -12,6 +12,8 @@ import com.syf.codechallenge3.service.UserService;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ImageController {
 
     private ImageService imageService;
+    private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
     public ImageController(UserService userService, ImageService imageService) {
         this.imageService = imageService;
@@ -60,6 +63,8 @@ public class ImageController {
      */
     @PostMapping("/upload")
     public ResponseEntity<ImageDto> uploadImage(@RequestBody ImageDto imageDTO) throws IOException {
+        logger.info("Uploading image: {}", imageDTO);
+
         ImageDto uploadedImage = imageService.uploadImage(imageDTO);
         return new ResponseEntity<>(uploadedImage, HttpStatus.OK);
     }
@@ -72,6 +77,8 @@ public class ImageController {
      */
     @GetMapping("/id/{id}")
     public ResponseEntity<ImageDto> getImage(@PathVariable("id") Long id) {
+        logger.info("Retrieving image by ID: {}", id);
+
         ImageDto image = imageService.getImageById(id);
         return new ResponseEntity<>(image, HttpStatus.OK);
     }
@@ -85,6 +92,8 @@ public class ImageController {
      */
     @DeleteMapping("/id/{id}")
     public ResponseEntity<String> deleteImage(@PathVariable("id") Long id) throws IOException {
+        logger.info("Deleting image by ID: {}", id);
+
         imageService.deleteImageById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -97,6 +106,8 @@ public class ImageController {
      */
     @ExceptionHandler(ImageNotFoundException.class)
     public ResponseEntity<String> handleImageNotFoundException(ImageNotFoundException e) {
+        logger.error("Image not found: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -108,6 +119,8 @@ public class ImageController {
      */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e) {
+        logger.error("User not found: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -119,6 +132,8 @@ public class ImageController {
      */
     @ExceptionHandler(UserNotAuthorizedException.class)
     public ResponseEntity<String> handleUserNotAuthorizedException(UserNotAuthorizedException e) {
+        logger.error("User not authorized: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
@@ -131,6 +146,8 @@ public class ImageController {
      */
     @ExceptionHandler(IOException.class)
     public ResponseEntity<String> handleIOException(IOException e) {
+        logger.error("IO exception: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -143,6 +160,8 @@ public class ImageController {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
+        logger.error("Internal server error: {}", e.getMessage());
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
