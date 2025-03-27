@@ -8,3 +8,5 @@ This project is for a code challenge. The goal of the project is to create a RES
 - View the user’s basic information and pictures.
 
 The project should leverage the Imgur API to integrate with Imgur for uploading, viewing, and deleting images.
+
+Note: Branch created for code review.
